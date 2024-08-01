@@ -9,7 +9,7 @@ router.post('/login', login);
 router.post('/createtask', authenticate, createTaskInSystem);
 router.get('/tasks', authenticate, getTasksInSystem);
 router.get('/gettask/:id', authenticate, getTaskInSystemById);
-router.put('/deletetask/:id', authenticate, updateTaskInSystemById);
-router.delete('/updatetask/:id', authenticate, deleteTaskInSystemById);
+router.put('/updatetask/:id', authenticate, updateTaskInSystemById);
+router.delete('/deletetask/:id', authenticate, deleteTaskInSystemById);
 
 module.exports = router;
