@@ -8,6 +8,8 @@ dotenv.config();
 
 const app = express();
 app.use(bodyParser.json());
+module.exports = app;
+
 
 const PORT = process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI;
@@ -26,3 +28,4 @@ const TaskServer = async () => {
 app.use('/api', routes);
 
 TaskServer();
+
