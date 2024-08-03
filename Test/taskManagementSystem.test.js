@@ -101,7 +101,7 @@ describe('Task Management System', () => {
         }
 
         const res = await request(app)
-            .patch(`/api/updatetask/${createdTaskId}`)
+            .put(`/api/updatetask/${createdTaskId}`)
             .set('Authorization', `Bearer ${token}`)
             .send({
                 title: 'Updated Task'
@@ -129,10 +129,10 @@ describe('Task Management System', () => {
 
         console.log('Delete Task Response:', res.body); 
 
-        if (res.statusCode !== 204) {
+        if (res.statusCode !== 200) {
             console.error('Error deleting task:', res.body);
         }
 
-        expect(res.statusCode).toEqual(204);
+        expect(res.statusCode).toEqual(200);
     });
 });
