@@ -11,8 +11,8 @@ const jwt = require('jsonwebtoken');
 
 jest.mock('../src/models');
 jest.mock('jsonwebtoken', () => ({
-    sign: jest.fn(),
-    verify: jest.fn().mockReturnValue({ id: 'testUserId' }) 
+    sign: jest.fn().mockReturnValue('fakeToken'),
+    verify: jest.fn().mockReturnValue({ id: 'testUserId' })
 }));
 
 describe('Task Management System Tests', () => {
@@ -22,24 +22,17 @@ describe('Task Management System Tests', () => {
         req = httpMocks.createRequest();
         res = httpMocks.createResponse();
         next = jest.fn();
-     
     });
 
-    //JSON validation
-
+    // JSON validation function
     const validateResponse = (responseData, expectedStatusCode, expectedResponse) => {
-        if (responseData) {
-            try {
-                const parsedData = JSON.parse(responseData);
-                expect(res.statusCode).toBe(expectedStatusCode);
-                expect(parsedData).toEqual(expectedResponse);
-            } catch (error) {
-                console.error('Failed to parse JSON:', responseData, error);
-                throw new Error('Failed to parse JSON');
-            }
-        } else {
-            console.error('Response Data is undefined');
-            throw new Error('Response Data is undefined');
+        try {
+            expect(res.statusCode).toBe(expectedStatusCode);
+            const parsedData = JSON.parse(responseData);
+            expect(parsedData).toEqual(expectedResponse);
+        } catch (error) {
+            console.error('Failed to parse JSON:', responseData, error);
+            throw new Error('Failed to parse JSON');
         }
     };
 
@@ -47,7 +40,7 @@ describe('Task Management System Tests', () => {
         req.body = { title: 'Invalid Task' };
         TaskManagement.prototype.save = jest.fn().mockRejectedValue(new Error('Failed to save'));
 
-        await createTaskInSystem(req, res, next); 
+        await createTaskInSystem(req, res, next);
 
         validateResponse(res._getData(), 400, { message: 'Failed to save' });
     });
@@ -56,7 +49,7 @@ describe('Task Management System Tests', () => {
         const mockTasks = [{ id: '123', title: 'Test Task', description: 'Test Description', status: 'Pending' }];
         TaskManagement.find = jest.fn().mockResolvedValue(mockTasks);
 
-        await getTasksInSystem(req, res, next); 
+        await getTasksInSystem(req, res, next);
 
         validateResponse(res._getData(), 200, mockTasks);
     });
@@ -64,7 +57,7 @@ describe('Task Management System Tests', () => {
     it('should handle errors during retrieving all tasks', async () => {
         TaskManagement.find = jest.fn().mockRejectedValue(new Error('Failed to retrieve tasks'));
 
-        await getTasksInSystem(req, res, next); 
+        await getTasksInSystem(req, res, next);
 
         validateResponse(res._getData(), 500, { message: 'Failed to retrieve tasks' });
     });
@@ -83,7 +76,7 @@ describe('Task Management System Tests', () => {
         req.params.id = '123';
         TaskManagement.findById = jest.fn().mockResolvedValue(null);
 
-        await getTaskInSystemById(req, res, next); 
+        await getTaskInSystemById(req, res, next);
 
         validateResponse(res._getData(), 404, { message: 'Task not found' });
     });
@@ -92,7 +85,7 @@ describe('Task Management System Tests', () => {
         req.params.id = '123';
         TaskManagement.findById = jest.fn().mockRejectedValue(new Error('Failed to retrieve task'));
 
-        await getTaskInSystemById(req, res, next); 
+        await getTaskInSystemById(req, res, next);
 
         validateResponse(res._getData(), 500, { message: 'Failed to retrieve task' });
     });
@@ -103,7 +96,7 @@ describe('Task Management System Tests', () => {
         const mockTask = { id: '123', title: 'Updated Task' };
         TaskManagement.findByIdAndUpdate = jest.fn().mockResolvedValue(mockTask);
 
-        await updateTaskInSystemById(req, res, next); 
+        await updateTaskInSystemById(req, res, next);
         validateResponse(res._getData(), 200, mockTask);
     });
 
@@ -112,7 +105,7 @@ describe('Task Management System Tests', () => {
         req.body = { title: 'Updated Task' };
         TaskManagement.findByIdAndUpdate = jest.fn().mockResolvedValue(null);
 
-        await updateTaskInSystemById(req, res, next); 
+        await updateTaskInSystemById(req, res, next);
 
         validateResponse(res._getData(), 404, { message: 'Task not updated' });
     });
@@ -122,7 +115,7 @@ describe('Task Management System Tests', () => {
         req.body = { title: 'Updated Task' };
         TaskManagement.findByIdAndUpdate = jest.fn().mockRejectedValue(new Error('Failed to update task'));
 
-        await updateTaskInSystemById(req, res, next); 
+        await updateTaskInSystemById(req, res, next);
         validateResponse(res._getData(), 400, { message: 'Failed to update task' });
     });
 
@@ -131,7 +124,7 @@ describe('Task Management System Tests', () => {
         const mockResponse = { message: 'Task deleted successfully' };
         TaskManagement.findByIdAndDelete = jest.fn().mockResolvedValue({});
 
-        await deleteTaskInSystemById(req, res, next); 
+        await deleteTaskInSystemById(req, res, next);
 
         validateResponse(res._getData(), 200, mockResponse);
     });
@@ -140,7 +133,7 @@ describe('Task Management System Tests', () => {
         req.params.id = '123';
         TaskManagement.findByIdAndDelete = jest.fn().mockResolvedValue(null);
 
-        await deleteTaskInSystemById(req, res, next); 
+        await deleteTaskInSystemById(req, res, next);
 
         validateResponse(res._getData(), 404, { message: 'Task not found' });
     });
@@ -149,7 +142,7 @@ describe('Task Management System Tests', () => {
         req.params.id = '123';
         TaskManagement.findByIdAndDelete = jest.fn().mockRejectedValue(new Error('Failed to delete task'));
 
-        await deleteTaskInSystemById(req, res, next); 
+        await deleteTaskInSystemById(req, res, next);
         validateResponse(res._getData(), 500, { message: 'Failed to delete task' });
     });
 });

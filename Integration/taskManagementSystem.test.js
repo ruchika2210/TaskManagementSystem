@@ -3,8 +3,8 @@ const app = require('../src/index');
 const mongoose = require('mongoose');
 const jwt = require('jsonwebtoken');
 
-const generateToken = () => {
-    return jwt.sign({ userId: 'testUserId' }, process.env.SECRET, { expiresIn: '1h' });
+const generateToken = (userId = 'testUserId') => {
+    return jwt.sign({ id: userId }, process.env.SECRET, { expiresIn: '3h' });
 };
 
 describe('Task Management System', () => {
@@ -12,6 +12,7 @@ describe('Task Management System', () => {
     let createdTaskId;
 
     beforeAll(async () => {
+        // Generate a valid token for authentication
         token = generateToken(); 
     });
 
@@ -19,7 +20,7 @@ describe('Task Management System', () => {
         await mongoose.disconnect();
     });
 
-    const validateResponse = (response, expectedResponse) => {
+    const validateResponse = (response, expectedResponse, expectedStatusCode) => {
         try {
             const data = response.body;
             if (data === undefined) {
@@ -27,9 +28,9 @@ describe('Task Management System', () => {
                 throw new Error('Response Data is undefined');
             }
 
-            console.log('Response Data:', data); // Add logging to debug
+            console.log('Response Data:', data);
 
-            // Compare the parsed data with the expected response
+            expect(response.statusCode).toBe(expectedStatusCode);
             expect(data).toEqual(expectedResponse);
         } catch (error) {
             console.error('Failed to parse JSON:', error);
@@ -49,23 +50,14 @@ describe('Task Management System', () => {
 
         console.log('Create Task Response:', res.body);
 
-        if (res.statusCode !== 201) {
-            console.error('Error creating task:', res.body);
-        }
-
-        expect(res.statusCode).toEqual(201);
-        expect(res.body).toHaveProperty('_id');
+        validateResponse(res, { ...res.body, _id: expect.any(String) }, 201);
 
         // Verify the created task can be retrieved
         const allTasksRes = await request(app)
             .get('/api/tasks')
             .set('Authorization', `Bearer ${token}`);
 
-        console.log('Retrieve All Tasks Response:', allTasksRes.body); 
-        
-        if (allTasksRes.statusCode !== 200) {
-            console.error('Error retrieving tasks:', allTasksRes.body);
-        }
+        console.log('Retrieve All Tasks Response:', allTasksRes.body);
 
         expect(allTasksRes.statusCode).toEqual(200);
         expect(Array.isArray(allTasksRes.body)).toBe(true);
@@ -77,7 +69,6 @@ describe('Task Management System', () => {
             console.error('Created task not found in the list.');
         }
 
-        // Ensure createdTaskId is set
         expect(createdTaskId).toBeDefined();
     });
 
@@ -86,14 +77,9 @@ describe('Task Management System', () => {
             .get('/api/tasks')
             .set('Authorization', `Bearer ${token}`);
 
-        console.log('Retrieve All Tasks Response:', res.body); 
-        
-        if (res.statusCode !== 200) {
-            console.error('Error retrieving tasks:', res.body);
-        }
+        console.log('Retrieve All Tasks Response:', res.body);
 
-        expect(res.statusCode).toEqual(200);
-        expect(Array.isArray(res.body)).toBe(true);
+        validateResponse(res, res.body, 200);
     });
 
     it('should retrieve a task by id successfully', async () => {
@@ -106,14 +92,9 @@ describe('Task Management System', () => {
             .get(`/api/gettask/${createdTaskId}`)
             .set('Authorization', `Bearer ${token}`);
 
-        console.log('Retrieve Task By ID Response:', res.body); 
+        console.log('Retrieve Task By ID Response:', res.body);
 
-        if (res.statusCode !== 200) {
-            console.error('Error retrieving task by id:', res.body);
-        }
-
-        expect(res.statusCode).toEqual(200);
-        expect(res.body).toHaveProperty('_id', createdTaskId.toString());
+        validateResponse(res, { ...res.body, _id: createdTaskId.toString() }, 200);
     });
 
     it('should update a task successfully', async () => {
@@ -129,14 +110,9 @@ describe('Task Management System', () => {
                 title: 'Updated Task'
             });
 
-        console.log('Update Task Response:', res.body); 
+        console.log('Update Task Response:', res.body);
 
-        if (res.statusCode !== 200) {
-            console.error('Error updating task:', res.body);
-        }
-
-        expect(res.statusCode).toEqual(200);
-        expect(res.body).toHaveProperty('title', 'Updated Task');
+        validateResponse(res, { ...res.body, title: 'Updated Task' }, 200);
     });
 
     it('should delete a task successfully', async () => {
@@ -149,12 +125,8 @@ describe('Task Management System', () => {
             .delete(`/api/deletetask/${createdTaskId}`)
             .set('Authorization', `Bearer ${token}`);
 
-        console.log('Delete Task Response:', res.body); 
+        console.log('Delete Task Response:', res.body);
 
-        if (res.statusCode !== 200) {
-            console.error('Error deleting task:', res.body);
-        }
-
-        expect(res.statusCode).toEqual(200);
+        validateResponse(res, { message: 'Task deleted successfully' }, 200);
     });
 });
