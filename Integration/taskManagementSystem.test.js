@@ -19,7 +19,25 @@ describe('Task Management System', () => {
         await mongoose.disconnect();
     });
 
-    it('should create a task', async () => {
+    const validateResponse = (response, expectedResponse) => {
+        try {
+            const data = response.body;
+            if (data === undefined) {
+                console.error('Response Data is undefined');
+                throw new Error('Response Data is undefined');
+            }
+
+            console.log('Response Data:', data); // Add logging to debug
+
+            // Compare the parsed data with the expected response
+            expect(data).toEqual(expectedResponse);
+        } catch (error) {
+            console.error('Failed to parse JSON:', error);
+            throw new Error('Failed to parse JSON');
+        }
+    };
+
+    it('should create a task successfully', async () => {
         const res = await request(app)
             .post('/api/createtask')
             .set('Authorization', `Bearer ${token}`)
@@ -38,11 +56,13 @@ describe('Task Management System', () => {
         expect(res.statusCode).toEqual(201);
         expect(res.body).toHaveProperty('_id');
 
+        // Verify the created task can be retrieved
         const allTasksRes = await request(app)
             .get('/api/tasks')
             .set('Authorization', `Bearer ${token}`);
 
         console.log('Retrieve All Tasks Response:', allTasksRes.body); 
+        
         if (allTasksRes.statusCode !== 200) {
             console.error('Error retrieving tasks:', allTasksRes.body);
         }
@@ -56,16 +76,18 @@ describe('Task Management System', () => {
         } else {
             console.error('Created task not found in the list.');
         }
+
+        // Ensure createdTaskId is set
+        expect(createdTaskId).toBeDefined();
     });
 
-    it('should retrieve all tasks', async () => {
+    it('should retrieve all tasks successfully', async () => {
         const res = await request(app)
             .get('/api/tasks')
             .set('Authorization', `Bearer ${token}`);
 
         console.log('Retrieve All Tasks Response:', res.body); 
         
-
         if (res.statusCode !== 200) {
             console.error('Error retrieving tasks:', res.body);
         }
@@ -74,7 +96,7 @@ describe('Task Management System', () => {
         expect(Array.isArray(res.body)).toBe(true);
     });
 
-    it('should retrieve a task by id', async () => {
+    it('should retrieve a task by id successfully', async () => {
         if (!createdTaskId) {
             console.error('No task ID found for retrieval.');
             return;
@@ -94,7 +116,7 @@ describe('Task Management System', () => {
         expect(res.body).toHaveProperty('_id', createdTaskId.toString());
     });
 
-    it('should update a task', async () => {
+    it('should update a task successfully', async () => {
         if (!createdTaskId) {
             console.error('No task ID found for updating.');
             return;
@@ -117,7 +139,7 @@ describe('Task Management System', () => {
         expect(res.body).toHaveProperty('title', 'Updated Task');
     });
 
-    it('should delete a task', async () => {
+    it('should delete a task successfully', async () => {
         if (!createdTaskId) {
             console.error('No task ID found for deletion.');
             return;

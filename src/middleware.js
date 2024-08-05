@@ -1,15 +1,4 @@
-// const jwt = require('jsonwebtoken');
 
-// exports.authenticate = (req, res, next) => {
-//     const token = req.header('Authorization').replace('Bearer ', '');
-//     try {
-//         const verifymessage = jwt.verify(token, process.env.SECRET);
-//         req.user = verifymessage;
-//         next();
-//     } catch (error) {
-//         res.status(401).json({ message: 'Please perform the authentication' });
-//     }
-// };
 
 const jwt = require('jsonwebtoken');
 
@@ -18,11 +7,11 @@ exports.authenticate = (req, res, next) => {
     console.log('Authorization header:', authHeader);
 
     if (!authHeader) {
-        console.log('No Authorization header has found');
-        return res.status(401).json({ message: 'token not  provided' });
+        console.log('No Authorization header found');
+        return res.status(401).json({ message: 'token not provided' }); 
     }
 
-    const token = authHeader.replace('Bearer ', '');
+    const token = authHeader.replace('Bearer ', '').trim(); 
     console.log('Token extracted:', token);
 
     try {
@@ -35,4 +24,3 @@ exports.authenticate = (req, res, next) => {
         return res.status(401).json({ message: 'Invalid token' });
     }
 };
-
