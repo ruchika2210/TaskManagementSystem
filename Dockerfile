@@ -19,4 +19,4 @@ COPY . .
 EXPOSE 3000
 
 # Define the command to run the application
-CMD [ "npm ", "start" ]
+CMD [ "nodemon", "src/index.js" ]
