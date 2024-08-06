@@ -15,6 +15,15 @@ It is deployed through the docker , and docker configuration is provided in the 
 - `middleware.js`: Contains middleware functions, including authentication.
 - `models.js`: Defines the Mongoose schema and model for tasks.
 - `userModel.js`: Defines the Mongoose schema and model for users.
+-  `taskManagementSystem.test.js`: it's inside the Integration folder - integration testing for API end points.
+-  `taskManagerController.test.js`: It's inside the Unit folder - it is unit testing for the controller functions.
+
+## Task Completed
+1. Authentication done through the user email and password.
+2. CRUD operation completed
+3. Testing completed.
+4. Deployed the project through docker 
+
 
 ## Installation
 
@@ -22,10 +31,12 @@ It is deployed through the docker , and docker configuration is provided in the 
 
    git clone https://github.com/ruchika2210/TaskManagementSystem.git
 
-2. Do npm install to install the dependencies
-3. docker-compose build (for building the docker project)
-4. docker-compose up (for running the docker containerized project)
+2. Do "npm install" to install the dependencies
+3. "docker-compose build" (for building the docker project)
+4. "docker-compose up" (for running the docker containerized project)
 5. If the background processes are on  :
     then list the process : "netstat -ano | findstr :3000" (3000 is port)
      and then kill the process using "taskkill /PID <process_id> /F
 6. Run the test file using "npm test"
+
+All of the env files and docker files are not ignored, pushed in the repository for smooth running of application in external environment.
