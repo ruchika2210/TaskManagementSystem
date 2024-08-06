@@ -43,13 +43,13 @@ It is deployed through the docker , and docker configuration is provided in the 
             1. Remove all the images "docker-compose down --rmi all --volumes" if there is present
             2.Only if modules are not found---- Go the shell docker-compose run --rm app /bin/sh
                     in that if by "running docker-compose up" modules are not installed then enter the shell and then "npm i <any module>"
-            4. "docker-compose build" (for building the docker project)
-            5. "docker-compose up" (for running the docker containerized project)
-            6. "docker-compose down" for stoping the instance
-            7. To run only test file "docker-compose run --rm test"
-            8. If the background processes are on  :
+            3. "docker-compose build" (for building the docker project)
+            4. "docker-compose up" (for running the docker containerized project)
+            5. "docker-compose down" for stoping the instance
+            6. To run only test file "docker-compose run --rm test"
+            7. If the background processes are on  :
                 then list the process : "netstat -ano | findstr :3000" (3000 is port)
                  and then kill the process using "taskkill /PID <process_id> /F
-            9. Run the test file using "npm test"
+            8. Run the test file using "npm test"
 
 All of the env files and docker files are not ignored, pushed in the repository for smooth running of application in external environment.
