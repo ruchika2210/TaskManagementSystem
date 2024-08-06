@@ -18,6 +18,7 @@ It is deployed through the docker , and docker configuration is provided in the 
 -  `taskManagementSystem.test.js`: it's inside the Integration folder - integration testing for API end points.
 -  `taskManagerController.test.js`: It's inside the Unit folder - it is unit testing for the controller functions.
 
+
 ## Task Completed
 1. Authentication done through the user email and password.
 2. CRUD operation completed
@@ -26,6 +27,9 @@ It is deployed through the docker , and docker configuration is provided in the 
 
 
 ## Installation
+
+
+####INSTALL docker desktop from here "https://www.docker.com/products/docker-desktop/"
 
 1. Clone the repository:
 
