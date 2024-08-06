@@ -40,8 +40,8 @@ It is deployed through the docker , and docker configuration is provided in the 
    OR
 3.   run through DOCKER
 4.  Remove all the images "docker-compose down --rmi all --volumes" if there is present
-   Only if modules are not found---- Go the shell docker-compose run --rm app /bin/sh
-   in that if by "running docker-compose up" modules are not installed then enter the shell and then "npm i <any module>"
+   IF MODULES ARE NOT FOUND THROUGH DOCKER< THEN EXPLICITLY INSTALL---- Go the shell "docker-compose run --rm app /bin/sh"
+   in that if by "running docker-compose up" modules are not installed then enter the shell give above and then "npm i <any module>"
 5. "docker-compose build" (for building the docker project)
 6. "docker-compose up" (for running the docker containerized project)
 7.  "docker-compose down" for stoping the instance
